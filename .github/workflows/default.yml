@@ -88,6 +88,8 @@ jobs:
         - windows-2025
       fail-fast: false
     runs-on: ${{ matrix.operatingSystem }}
+    permissions:
+      contents: write
     needs: [build]
     #
     steps:
