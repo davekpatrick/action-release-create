@@ -2,7 +2,7 @@
   "author": "davekpatrick",
   "name": "@davekpatrick/action-release-create",
   "license": "BSD-3-Clause",
-  "version": "0.2.0",
+  "version": "0.0.0",
   "description": "GitHub Action used to create a release on GitHub",
   "keywords": [
     "node",
