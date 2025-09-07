@@ -109,7 +109,9 @@ jobs:
         Get-ChildItem -Recurse
     - name: Validate build 
       id: build-test
-      uses: ./    
+      uses: ./  
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       with:
         versionTag: ${{ needs.build.outputs.versionTag }}+build-${{ matrix.operatingSystem }}-${{ github.run_number }}${{ github.run_attempt }}
     - name: Test Output (non-Windows)

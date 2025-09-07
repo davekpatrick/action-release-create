@@ -126,10 +126,18 @@ module.exports = async function main() {
     const envApiToken = process.env.GITHUB_TOKEN // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
     // Ensure we have a usable API token
     var apiToken = null
-    if (argApiToken !== null && argApiToken !== '') {
+    if (
+      argApiToken !== null &&
+      argApiToken !== '' &&
+      argApiToken !== undefined
+    ) {
       actionsCore.debug('API token input provided')
       apiToken = argApiToken
-    } else if (envApiToken !== null && envApiToken !== '') {
+    } else if (
+      envApiToken !== null &&
+      envApiToken !== '' &&
+      envApiToken !== undefined
+    ) {
       actionsCore.debug('Environment API token found')
       apiToken = envApiToken
     } else {

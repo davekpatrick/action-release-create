@@ -97,6 +97,8 @@ jobs:
         Get-ChildItem -Recurse
     - name: Release
       uses: davekpatrick/action-release-create@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         versionTag: ${{ needs.build.outputs.versionTag }}
 ...
