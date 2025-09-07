@@ -7,6 +7,9 @@ on:
 
 jobs:
   build:
+    name: Publish Release
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04
     steps:
       - name: Locate the release artifact Run

@@ -79,6 +79,8 @@ jobs:
       fail-fast: false
     needs: [ build ]
     runs-on: ${{ matrix.operatingSystem }}
+    permissions:
+      contents: write
     # 
     steps:
     - uses: actions/download-artifact@v5
@@ -97,6 +99,8 @@ jobs:
         Get-ChildItem -Recurse
     - name: Release
       uses: davekpatrick/action-release-create@main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         versionTag: ${{ needs.build.outputs.versionTag }}
 ...

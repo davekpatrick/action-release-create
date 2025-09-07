@@ -53,18 +53,40 @@ module.exports = async function createRelease(
   // ------------------------------------
   const context = github.context
   const octokit = github.getOctokit(argApiToken)
+  actionsCore.debug('context[' + JSON.stringify(context) + ']')
   // ------------------------------------
   // Create a release
   // doc: https://docs.github.com/en/rest/releases/releases#create-a-release
   //      https://octokit.github.io/rest.js/#repos-create-release
+  actionsCore.info('Creating release...')
+  actionsCore.info('releaseName[' + releaseName + ']')
+  actionsCore.info('tagName[' + argVersionTag + ']')
+  actionsCore.info('releaseDraft[' + releaseDraft + ']')
+  actionsCore.info('releasePre[' + releasePre + ']')
+  // create the release
+  // https://docs.github.com/en/rest/reference/repos#create-a-release
+  // POST /repos/{owner}/{repo}/releases
+  // octokit.repos.createRelease()
+  // https://octokit.github.io/rest.js/v18#repos-create-release
+  // octokit.repos.createRelease()
+  // NOTE: generate_release_notes requires GitHub API v3.9 or higher
+  //       https://docs.github.com/en/rest/reference/repos#create-a-release
+  //       https://github.blog/changelog/2022-11-09-generate-release-notes-via-api/
+  //       https://octokit.github.io/rest.js/v18#repos-create-release
+  let repoOwner = context.repo.owner
+  let repoName = context.repo.repo
+  let commitSha = context.sha
+  actionsCore.debug('repoOwner[' + repoOwner + ']')
+  actionsCore.debug('repoName[' + repoName + ']')
+  actionsCore.debug('commitSha[' + commitSha + ']')
   const createReleaseData = await octokit.repos.createRelease({
-    owner: context.repo.owner,
-    repo: context.repo,
-    target_commitish: context.sha,
+    owner: repoOwner,
+    repo: repoName,
+    target_commitish: commitSha,
     tag_name: argVersionTag,
     name: releaseName,
-    releaseDraft,
-    releasePre,
+    draft: releaseDraft,
+    prerelease: releasePre,
     generate_release_notes: true,
   })
   // setup return data
@@ -126,10 +148,18 @@ module.exports = async function main() {
     const envApiToken = process.env.GITHUB_TOKEN // doc: https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env
     // Ensure we have a usable API token
     var apiToken = null
-    if (argApiToken !== null && argApiToken !== '') {
+    if (
+      argApiToken !== null &&
+      argApiToken !== '' &&
+      argApiToken !== undefined
+    ) {
       actionsCore.debug('API token input provided')
       apiToken = argApiToken
-    } else if (envApiToken !== null && envApiToken !== '') {
+    } else if (
+      envApiToken !== null &&
+      envApiToken !== '' &&
+      envApiToken !== undefined
+    ) {
       actionsCore.debug('Environment API token found')
       apiToken = envApiToken
     } else {
