@@ -1,15 +1,18 @@
-# This workflow will build and test the repository and create release artifacts
+# This workflow will run the CI build and tests for the repository
 #
 # BOF
 ---
-name: Continuous Delivery Release
-run-name: "Continuous Delivery (CD) creating release"
+name: Continuous Integration
+run-name: "Continuous Integration (CI) build #${{ github.run_number }}"
 on:
   push:
-    branches:    
+    branches-ignore:
     - main
-    paths-ignore:
-    - '**.md'
+    - development
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches:
+    - main
 jobs:
   # --------------------------------------------
   build:
@@ -26,6 +29,9 @@ jobs:
       with:
         node-version: ${{ matrix.nodeVersion }}
     - uses: actions/checkout@v3
+    - name: Calculate a short git SHA
+      id: git-sha-short
+      run: echo "GITHUB_SHA_SHORT=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_OUTPUT
     - name: Install dependencies
       run: |
         cd node
@@ -46,21 +52,21 @@ jobs:
         npm run test
     - name: Calculate Version
       id: version
-      uses: davekpatrick/action-release-version@main # temporary, use main branch for latest
+      uses: davekpatrick/action-release-version@main # use main branch for latest
       with:
         tagPrefix: ''
         apiToken: ${{ secrets.GITHUB_TOKEN }}
     - name: Build Version
       run: |
         cd node
-        npm version ${{ steps.version.outputs.versionTag }} 
+        npm version ${{ steps.version.outputs.versionTag }}+build-${{ steps.git-sha-short.outputs.GITHUB_SHA_SHORT }}-${{ github.run_number }}${{ github.run_attempt }}
     - name: Compile
       run: |
         cd node
         npm run build
     - uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.repository.name }}_release_${{ steps.version.outputs.versionTag }}
+        name: ${{ github.event.repository.name }}-build
         if-no-files-found: error
         path: |
           node/dist/
@@ -71,33 +77,54 @@ jobs:
       versionTag: ${{ steps.version.outputs.versionTag }}
   # --------------------------------------------
   test:
-    name: Artifact Release
+    name: Artifact Test
     strategy:
       matrix:
-        operatingSystem: [ubuntu-24.04]
-        nodeVersion: [20]
+        operatingSystem:
+        - ubuntu-22.04
+        - ubuntu-24.04
+        - macos-14
+        - macos-15
+        - windows-2022
+        - windows-2025
       fail-fast: false
-    needs: [ build ]
     runs-on: ${{ matrix.operatingSystem }}
-    # 
+    permissions:
+      contents: write
+    needs: [build]
+    #
     steps:
     - uses: actions/download-artifact@v5
       with:
-        name: ${{ github.event.repository.name }}_release_${{ needs.build.outputs.versionTag }}
-    - name: Validate
+        name: ${{ github.event.repository.name }}-build
+    - name: Validate setup
       if: ${{ runner.os != 'Windows' }}
       run: |
         node --version
         ls -lR
-    - name: Validate
+        set
+    - name: Validate setup
       if: ${{ runner.os == 'Windows' }}
       shell: powershell
       run: |
         & node --version
+        Set-Location -Path ./
         Get-ChildItem -Recurse
-    - name: Release
-      uses: davekpatrick/action-release-create@main
+    - name: Validate build 
+      id: build-test
+      uses: ./  
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       with:
-        versionTag: ${{ needs.build.outputs.versionTag }}
+        versionTag: ${{ needs.build.outputs.versionTag }}+build-${{ matrix.operatingSystem }}-${{ github.run_number }}${{ github.run_attempt }}
+    - name: Test Output (non-Windows)
+      if: ${{ runner.os != 'Windows' }}
+      run: |
+        echo ${{ steps.build-test.outputs.versionTag }}
+    - name: Test Output (Windows)
+      if: ${{ runner.os == 'Windows' }}
+      shell: powershell
+      run: |
+        Write-Host "${{ steps.build-test.outputs.versionTag }}"
 ...
 # EOF
