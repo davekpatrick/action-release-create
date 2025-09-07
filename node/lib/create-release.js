@@ -24,17 +24,18 @@ module.exports = async function createRelease(
   actionsCore.debug('Start ' + functionName)
   // Argument validation
   if (argReleaseType === null || argReleaseType === '') {
-    actionsCore.setFailed('No release type specified')    
+    actionsCore.setFailed('No release type specified')
   }
   actionsCore.info('releaseType[' + argReleaseType + ']')
+  let releasePre = false
+  let releaseDraft = false
+
   if (argReleaseType === 'draft') {
-    var releaseDraft = true
-  } else if (argReleaseType === 'release') { 
-    var releaseDraft = false
-    var releasePre = false
+    releaseDraft = true
+  } else if (argReleaseType === 'release') {
+    // default settings
   } else if (argReleaseType === 'prerelease') {
-    var releaseDraft = false
-    var releasePre = false
+    releasePre = true
   } else {
     actionsCore.setFailed('Invalid release type specified')
     return
@@ -58,11 +59,20 @@ module.exports = async function createRelease(
     name: releaseName,
     releaseDraft,
     releasePre,
-    generate_release_notes: true
-    }); 
+    generate_release_notes: true,
+  })
   // setup return data
   var returnData = {
-    exitCode: 0
+    exitCode: 0,
+  }
+  if (createReleaseData.status === 201) {
+    actionsCore.info('Release created successfully')
+    actionsCore.info('Release URL: ' + createReleaseData.data.html_url)
+    actionsCore.setOutput('releaseUrl', createReleaseData.data.html_url)
+    returnData.releaseUrl = createReleaseData.data.html_url
+  } else {
+    actionsCore.setFailed('Error creating release')
+    returnData.exitCode = 1
   }
   // ------------------------------------
   actionsCore.debug('End ' + functionName)
