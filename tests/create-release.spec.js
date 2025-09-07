@@ -387,10 +387,11 @@ describe("create-release.js", async function () {
     })
     
     await createReleaseModule('test_token', 'v', '1.0.0', 'release')
-    
+    console.log(createReleaseArgs)
     // Validate the test result
     expect(createReleaseArgs.owner).to.equal('different_owner')
-    expect(createReleaseArgs.repo).to.deep.equal({owner: 'different_owner', repo: 'different_repo'})
+    expect(createReleaseArgs.repo).to.equal('different_repo')
+    //expect(createReleaseArgs.repo).to.deep.equal({owner: 'different_owner', repo: 'different_repo'})
     expect(createReleaseArgs.target_commitish).to.equal('def456')
   });
 

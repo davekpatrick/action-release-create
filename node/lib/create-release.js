@@ -47,7 +47,7 @@ module.exports = async function createRelease(
   // ------------------------------------
   const context = github.context
   const octokit = github.getOctokit(argApiToken)
-  actionsCore.info('context[' + JSON.stringify(context) + ']')
+  actionsCore.debug('context[' + JSON.stringify(context) + ']')
   // ------------------------------------
   // Create a release
   // doc: https://docs.github.com/en/rest/releases/releases#create-a-release
@@ -67,10 +67,16 @@ module.exports = async function createRelease(
   //       https://docs.github.com/en/rest/reference/repos#create-a-release
   //       https://github.blog/changelog/2022-11-09-generate-release-notes-via-api/
   //       https://octokit.github.io/rest.js/v18#repos-create-release
+  repoOwner = context.repo.owner
+  repoName = context.repo.repo
+  commitSha = context.sha
+  actionsCore.debug('repoOwner[' + repoOwner + ']')
+  actionsCore.debug('repoName[' + repoName + ']')
+  actionsCore.debug('commitSha[' + commitSha + ']')
   const createReleaseData = await octokit.repos.createRelease({
-    owner: context.repo.owner,
-    repo: context.repo,
-    target_commitish: context.sha,
+    owner: repoOwner,
+    repo: repoName,
+    target_commitish: commitSha,
     tag_name: argVersionTag,
     name: releaseName,
     draft: releaseDraft,
