@@ -38,14 +38,16 @@ describe("create-release.js", async function () {
       },
       getOctokit: function() {
         return {
-          repos: {
-            createRelease: function() {
-              return Promise.resolve({
-                status: 201,
-                data: {
-                  html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0'
-                }
-              })
+          rest: {
+            repos: {
+              createRelease: function() {
+                return Promise.resolve({
+                  status: 201,
+                  data: {
+                    html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0'
+                  }
+                })
+              }
             }
           }
         }
@@ -149,15 +151,17 @@ describe("create-release.js", async function () {
     mockGithub.getOctokit = function(token) {
       expect(token).to.equal('test_token')
       return {
-        repos: {
-          createRelease: function(args) {
-            createReleaseArgs = args
-            return Promise.resolve({
-              status: 201,
-              data: {
-                html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0'
-              }
-            })
+        rest: {
+          repos: {
+            createRelease: function(args) {
+              createReleaseArgs = args
+              return Promise.resolve({
+                status: 201,
+                data: {
+                  html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0'
+                }
+              })
+            }
           }
         }
       }
@@ -204,15 +208,17 @@ describe("create-release.js", async function () {
     
     mockGithub.getOctokit = function() {
       return {
-        repos: {
-          createRelease: function(args) {
-            createReleaseArgs = args
-            return Promise.resolve({
-              status: 201,
-              data: {
-                html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0'
-              }
-            })
+        rest: {
+          repos: {
+            createRelease: function(args) {
+              createReleaseArgs = args
+              return Promise.resolve({
+                status: 201,
+                data: {
+                  html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0'
+                }
+              })
+            }
           }
         }
       }
@@ -241,15 +247,17 @@ describe("create-release.js", async function () {
     
     mockGithub.getOctokit = function() {
       return {
-        repos: {
-          createRelease: function(args) {
-            createReleaseArgs = args
-            return Promise.resolve({
-              status: 201,
-              data: {
-                html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0-alpha.1'
-              }
-            })
+        rest: {
+          repos: {
+            createRelease: function(args) {
+              createReleaseArgs = args
+              return Promise.resolve({
+                status: 201,
+                data: {
+                  html_url: 'https://github.com/testowner/testrepo/releases/tag/v1.0.0-alpha.1'
+                }
+              })
+            }
           }
         }
       }
@@ -285,12 +293,14 @@ describe("create-release.js", async function () {
     
     mockGithub.getOctokit = function() {
       return {
-        repos: {
-          createRelease: function() {
-            return Promise.resolve({
-              status: 500,
-              data: {}
-            })
+        rest: {
+          repos: {
+            createRelease: function() {
+              return Promise.resolve({
+                status: 500,
+                data: {}
+              })
+            }
           }
         }
       }
@@ -321,15 +331,17 @@ describe("create-release.js", async function () {
     
     mockGithub.getOctokit = function() {
       return {
-        repos: {
-          createRelease: function(args) {
-            createReleaseArgs = args
-            return Promise.resolve({
-              status: 201,
-              data: {
-                html_url: 'https://github.com/testowner/testrepo/releases/tag/release-2.0.0'
-              }
-            })
+        rest: {
+          repos: {
+            createRelease: function(args) {
+              createReleaseArgs = args
+              return Promise.resolve({
+                status: 201,
+                data: {
+                  html_url: 'https://github.com/testowner/testrepo/releases/tag/release-2.0.0'
+                }
+              })
+            }
           }
         }
       }
@@ -366,15 +378,17 @@ describe("create-release.js", async function () {
     
     mockGithub.getOctokit = function() {
       return {
-        repos: {
-          createRelease: function(args) {
-            createReleaseArgs = args
-            return Promise.resolve({
-              status: 201,
-              data: {
-                html_url: 'https://github.com/different_owner/different_repo/releases/tag/v1.0.0'
-              }
-            })
+        rest: {
+          repos: {
+            createRelease: function(args) {
+              createReleaseArgs = args
+              return Promise.resolve({
+                status: 201,
+                data: {
+                  html_url: 'https://github.com/different_owner/different_repo/releases/tag/v1.0.0'
+                }
+              })
+            }
           }
         }
       }

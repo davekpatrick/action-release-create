@@ -73,7 +73,7 @@ module.exports = async function createRelease(
   actionsCore.debug('repoOwner[' + repoOwner + ']')
   actionsCore.debug('repoName[' + repoName + ']')
   actionsCore.debug('commitSha[' + commitSha + ']')
-  const createReleaseData = await octokit.repos.createRelease({
+  const createReleaseData = await octokit.rest.repos.createRelease({
     owner: repoOwner,
     repo: repoName,
     target_commitish: commitSha,
