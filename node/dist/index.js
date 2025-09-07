@@ -79,8 +79,8 @@ module.exports = async function createRelease(
     target_commitish: context.sha,
     tag_name: argVersionTag,
     name: releaseName,
-    releaseDraft,
-    releasePre,
+    draft: releaseDraft,
+    prerelease: releasePre,
     generate_release_notes: true,
   })
   // setup return data
