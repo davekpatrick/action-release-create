@@ -73,9 +73,9 @@ module.exports = async function createRelease(
   //       https://docs.github.com/en/rest/reference/repos#create-a-release
   //       https://github.blog/changelog/2022-11-09-generate-release-notes-via-api/
   //       https://octokit.github.io/rest.js/v18#repos-create-release
-  repoOwner = context.repo.owner
-  repoName = context.repo.repo
-  commitSha = context.sha
+  let repoOwner = context.repo.owner
+  let repoName = context.repo.repo
+  let commitSha = context.sha
   actionsCore.debug('repoOwner[' + repoOwner + ']')
   actionsCore.debug('repoName[' + repoName + ']')
   actionsCore.debug('commitSha[' + commitSha + ']')
